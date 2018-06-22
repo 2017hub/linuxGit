@@ -1,7 +1,149 @@
-2018github
-xiugaile
-20180620
+(1)github登入用户名和密码
 
 loginName:longyaoyuan1987@163.com
 mima:long123
+
+===================================centos7 install git==========================
+
+github的安装步骤：源码
+
+1、最新git源码下载地址：
+
+https://github.com/git/git/releases
+
+https://www.kernel.org/pub/software/scm/git/
+
+
+可以手动下载下来在上传到服务器上面
+
+
+2 移除旧版本git
+
+centos自带Git，7.x版本自带git 1.8.3.1（应该是，也可能不是），
+安装新版本之前需要使用yum remove git卸载（安装后卸载也可以）。
+
+
+[root@Git ~]# git --version    ## 查看自带的版本git version 1.8.3.1
+[root@Git ~]# yum remove git   ## 移除原来的版本
+
+3 安装所需软件包
+
+[root@Git ~]# yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel
+[root@Git ~]# yum install gcc-c++ perl-ExtUtils-MakeMaker
+
+
+4下载&安装
+
+[root@Git ~]# cd /usr/src
+[root@Git ~]# wget https://www.kernel.org/pub/software/scm/git/git-2.7.3.tar.gz
+
+5 解压
+
+[root@Git ~]# tar xf git-2.7.3.tar.gz
+
+6 配置编译安装
+
+[root@Git ~]# cd git-2.7.3
+[root@Git ~]# make configure
+[root@Git ~]# ./configure --prefix=/usr/git ##配置目录
+[root@Git ~]# make profix=/usr/git
+[root@Git ~]# make install
+
+7 加入环境变量
+
+[root@Git ~]# echo "export PATH=$PATH:/usr/git/bin" >> /etc/profile
+[root@Git ~]# source /etc/profile
+
+8 检查版本
+
+[root@Git git-2.7.3]# git --version
+git version 2.7.3
+
+===============================================================================================
+Git 服务器搭建(yum)
+
+上一章节中我们远程仓库使用了 Github，Github 公开的项目是免费的，但是如果你不想让其他人看到你的项目就需要收费。
+
+这时我们就需要自己搭建一台Git服务器作为私有仓库使用。
+
+接下来我们将以 Centos 为例搭建 Git 服务器。
+1、安装Git
+
+$ yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-devel
+$ yum install git
+
+接下来我们 创建一个git用户组和用户，用来运行git服务：
+
+$ groupadd git
+$ useradd git -g git
+
+2、创建证书登录
+
+收集所有需要登录的用户的公钥，公钥位于id_rsa.pub文件中，把我们的公钥导入到/home/git/.ssh/authorized_keys文件里，一行一个。
+
+如果没有该文件创建它：
+
+$ cd /home/git/
+$ mkdir .ssh
+$ chmod 700 .ssh
+$ touch .ssh/authorized_keys
+$ chmod 600 .ssh/authorized_keys
+
+
+3、初始化Git仓库
+
+首先我们选定一个目录作为Git仓库，假定是/home/gitrepo/runoob.git，在/home/gitrepo目录下输入命令：
+
+$ cd /home
+$ mkdir gitrepo
+$ chown git:git gitrepo/
+$ cd gitrepo
+
+$ git init --bare runoob.git
+Initialized empty Git repository in /home/gitrepo/runoob.git/
+
+以上命令Git创建一个空仓库，服务器上的Git仓库通常都以.git结尾。然后，把仓库所属用户改为git：
+
+$ chown -R git:git runoob.git
+
+4、克隆仓库
+
+$ git clone git@192.168.45.4:/home/gitrepo/runoob.git
+Cloning into 'runoob'...
+warning: You appear to have cloned an empty repository.
+Checking connectivity... done.
+
+192.168.45.4 为 Git 所在服务器 ip ，你需要将其修改为你自己的 Git 服务 ip。
+
+这样我们的 Git 服务器安装就完成了，接下来我们可以禁用 git 用户通过shell登录，可以通过编辑/etc/passwd文件完成。找到类似下面的一行：
+
+git:x:503:503::/home/git:/bin/bash
+
+改为：
+
+git:x:503:503::/home/git:/sbin/nologin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
